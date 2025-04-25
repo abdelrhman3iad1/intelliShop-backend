@@ -13,20 +13,22 @@ return new class extends Migration
     {
         Schema::create('cart_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->nullOnDelete();
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
 
 
             $table->string('product_name');
             $table->decimal('product_price', 10, 2);
+            $table->decimal('total_price', 10, 2);
             $table->unsignedInteger('quantity');
 
-            $table->unsignedBigInteger('cart_id')->nullable();
-            $table->foreign('cart_id')->references('id')->on('carts')->nullOnDelete();
+            $table->unsignedBigInteger('cart_id');
+            $table->foreign('cart_id')->references('id')->on('carts')->cascadeOnDelete();
 
             $table->unsignedBigInteger('brand_id')->nullable();
-            $table->foreign('brand_id')->references('id')->on('brands')->nullOnDelete();
+            $table->foreign('brand_id')->references('id')->on('brands')->cascadeOnDelete();
 
+            $table->unique(['cart_id', 'product_id']);
 
             $table->timestamps();
         });

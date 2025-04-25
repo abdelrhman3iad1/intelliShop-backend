@@ -11,7 +11,7 @@ class Order extends Model
 
     protected $fillable = [
         'number', 'shipping_charges', 'tax', 'discount',
-        'total_price', 'status', 'user_id', 'coupon_id'
+        'total_price', 'status', 'user_id'//, 'coupon_id'
     ];
 
     public function user()

@@ -20,9 +20,11 @@ return new class extends Migration
             $table->text('address_one');
             $table->text('address_two')->nullable();
 
-            $table->unsignedBigInteger('city_id')->nullable();
-            $table->foreign('city_id')->references('id')->on('cities')->nullOnDelete();
-
+            /*$table->unsignedBigInteger('city_id')->nullable();
+            $table->foreign('city_id')->references('id')->on('cities')->nullOnDelete();*/
+            $table->unsignedBigInteger('order_id');
+            $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
+            
             $table->string('postal_code');
             $table->timestamps();
         });

@@ -13,24 +13,25 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description');
-            $table->string('image')->nullable();
+            $table->string('name')->unique();
+            $table->string('slug');
+            $table->text('description')->nullable();
+            $table->string('image');
             $table->decimal('price', 10, 2);
+            $table->decimal('discount_in_percentage', 10, 2)->nullable();
+            $table->decimal('total_price', 10, 2);
             $table->unsignedInteger('quantity');
-            $table->enum('condition', ['default', 'new', 'hot'])->default('default');
+            $table->enum('condition', ['Default', 'New', 'Hot'])->default('Default');
             $table->boolean('status')->default(true);
-            $table->float('rating')->default(0);
 
-            $table->unsignedBigInteger('category_id')->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
 
             $table->unsignedBigInteger('sub_category_id')->nullable();
             $table->foreign('sub_category_id')->references('id')->on('sub_categories')->nullOnDelete();
 
-            $table->unsignedBigInteger('brand_id')->nullable();
-            $table->foreign('brand_id')->references('id')->on('brands')->nullOnDelete();
+            $table->unsignedBigInteger('brand_id');
+            $table->foreign('brand_id')->references('id')->on('brands')->cascadeOnDelete();
 
             $table->timestamps();
         });

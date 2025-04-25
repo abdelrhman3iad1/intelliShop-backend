@@ -16,9 +16,8 @@ return new class extends Migration
             $table->string('number')->unique();
             $table->decimal('shipping_charges', 8, 2);
             $table->decimal('tax', 8, 2);
-            $table->decimal('discount', 8, 2)->default(0);
             $table->decimal('total_price', 10, 2);
-            $table->string('status')->default('pending');
+            $table->enum('status',['pending','confirmed','shipped','deliverd','cancelled'])->default('pending');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

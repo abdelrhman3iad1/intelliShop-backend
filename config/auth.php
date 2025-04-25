@@ -37,8 +37,17 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver' => 'sanctum',
             'provider' => 'users',
+        ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+    
+        'brand_admin' => [
+            'driver' => 'session',
+            'provider' => 'brand_admins',
         ],
     ],
 
@@ -64,6 +73,14 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'admins'=>[
+            'driver'=>'eloquent',
+            'model'=>App\Models\Admin::class
+        ],
+        'brand_admins' =>[
+            'driver'=>'eloquent',
+            'model'=>App\Models\BrandAdmin::class
+        ]
 
         // 'users' => [
         //     'driver' => 'database',

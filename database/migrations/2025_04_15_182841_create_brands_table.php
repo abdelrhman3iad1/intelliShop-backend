@@ -13,16 +13,16 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
-            $table->text('description')->nullable();
-            $table->string('logo')->nullable();
-            $table->string('cover')->nullable();
-            $table->boolean('status')->default(true);
-            $table->string('organization_license')->nullable();
-            $table->string('commercial_registry_extract')->nullable();
-            $table->string('tax_registry')->nullable();
-            $table->unsignedBigInteger('wallet_id')->nullable();
+            $table->string('name')->unique();
+            $table->string('slug');
+            $table->text('description');
+            $table->string('logo');
+            $table->string('cover');
+            $table->boolean('status')->default(false);
+            $table->string('organization_license');
+            $table->string('commercial_registry_extract');
+            $table->string('tax_registry');
+            // $table->unsignedBigInteger('wallet_id')->nullable();
             $table->timestamps();
         });
     }

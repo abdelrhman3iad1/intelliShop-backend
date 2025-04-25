@@ -11,13 +11,13 @@ class Product extends Model
 
     protected $fillable = [
         'name', 'slug', 'description', 'image', 'price', 'quantity',
-        'condition', 'status', 'rating', 'category_id', 'sub_category_id', 'brand_id'
+        'condition', 'status',/* 'rating',*/ 'category_id', 'sub_category_id', 'brand_id'
     ];
 
-    public function images()
+    /*public function images()
     {
         return $this->hasMany(ProductImage::class);
-    }
+    }*/
 
     public function category()
     {

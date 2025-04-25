@@ -11,13 +11,13 @@ class OrderDetail extends Model
 
     protected $fillable = [
         'first_name', 'last_name', 'email', 'phone_number',
-        'address_one', 'address_two', 'city_id', 'postal_code'
+        'address_one', 'address_two',  'postal_code','order_id' //city_id',
     ];
 
-    public function city()
+    /*public function city()
     {
         return $this->belongsTo(City::class);
-    }
+    }*/
 
     public function order()
     {
