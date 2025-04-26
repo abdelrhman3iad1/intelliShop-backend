@@ -9,15 +9,13 @@ use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
 
 class ResetPassController extends Controller
 {
-
     public function forgotPassword(Request $request)
     {
-        // dd("rahoom");
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
         ]);
@@ -32,9 +30,9 @@ class ResetPassController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        $resetCode = rand(100000, 999999); 
+        $resetCode = rand(100000, 999999);
         $user->reset_code = $resetCode;
-        $user->reset_code_expires_at = Carbon::now()->addMinutes(10); 
+        $user->reset_code_expires_at = Carbon::now()->addMinutes(10);
         $user->save();
 
         Mail::raw("Your reset code is: $resetCode", function ($message) use ($user) {
@@ -47,11 +45,46 @@ class ResetPassController extends Controller
             'message' => 'Reset code sent to your email.',
         ], 200);
     }
+
+    public function verifyResetCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'reset_code' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation Error',
+                'data' => $validator->errors(),
+            ], 400);
+        }
+
+        $user = User::where('reset_code', $request->reset_code)->first();
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid reset code.',
+            ], 400);
+        }
+
+        if (Carbon::now()->greaterThan($user->reset_code_expires_at)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Reset code has expired.',
+            ], 400);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Reset code is valid.',
+        ], 200);
+    }
+
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
-            'reset_code' => 'required|string',
             'password' => ['required', 'string', 'min:8', 'confirmed', Password::defaults()],
         ]);
 
@@ -63,23 +96,13 @@ class ResetPassController extends Controller
             ], 400);
         }
 
-        $user = User::where('email', $request->email)
-            ->where('reset_code', $request->reset_code)
-            ->first();
+        $user = User::where('email', $request->email)->first();
 
         if (!$user) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid reset code.',
-                'data' => null,
-            ], 400);
-        }
-
-        if (Carbon::now()->greaterThan($user->reset_code_expires_at)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Reset code has expired.',
-            ], 400);
+                'message' => 'User not found.',
+            ], 404);
         }
 
         $user->password = Hash::make($request->password);

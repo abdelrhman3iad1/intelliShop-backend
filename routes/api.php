@@ -37,9 +37,11 @@ Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(f
         Route::post('change-password',  'changePassword')->name('change-password');
     });
 });
-
-Route::post("forgot-password", [ResetPassController::class, 'forgotPassword'])->name('forgot-password');
-Route::post("reset-password", [ResetPassController::class, 'resetPassword'])->name('reset-password');
+Route::prefix('auth')->name('auth.')->controller(ResetPassController::class)->group(function () {
+    Route::post('forgot-password', 'forgotPassword')->name('forgot-password');
+    Route::post('verify-reset-code', 'verifyResetCode')->name('verify-reset-code');
+    Route::post('reset-password', 'resetPassword')->name('reset-password');
+});
 
 Route::prefix('categories')->name('categories.')->controller(CategoryController::class)->group(function () {
     Route::get('get-categories', 'getCategories')->name('index');
