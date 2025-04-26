@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Auth\ResetPassController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\OrderController;
@@ -25,20 +26,26 @@ use Illuminate\Support\Facades\Route;
     return $request->user();
 });*/
 
-Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(function(){
-        Route::post("register", "register")->name('register');
-        Route::post("login", "login")->name('login');
-    Route::middleware('auth:sanctum')->group(function(){
-            Route::post("logout", "logout")->name('logout');
-            Route::post('change-password',  'changePassword')->name('change-password');
+
+
+Route::prefix('auth')->name('auth.')->controller(AuthController::class)->group(function () {
+    Route::post("register", "register")->name('register');
+    Route::post("login", "login")->name('login');
+    
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post("logout", "logout")->name('logout');
+        Route::post('change-password',  'changePassword')->name('change-password');
     });
 });
 
-Route::prefix('categories')->name('categories.')->controller(CategoryController::class)->group(function(){
-    Route::get('get-categories','getCategories')->name('index');
+Route::post("forgot-password", [ResetPassController::class, 'forgotPassword'])->name('forgot-password');
+Route::post("reset-password", [ResetPassController::class, 'resetPassword'])->name('reset-password');
+
+Route::prefix('categories')->name('categories.')->controller(CategoryController::class)->group(function () {
+    Route::get('get-categories', 'getCategories')->name('index');
 });
 
-Route::prefix('products')->name('products.')->controller(ProductController::class)->group(function(){
+Route::prefix('products')->name('products.')->controller(ProductController::class)->group(function () {
     Route::get('/', 'index')->name('all');
     Route::get('product/{slug}', 'getProduct')->name('show');
     Route::get('category/{category_slug}', 'getProductsByCategory')->name('by-category');
@@ -52,7 +59,7 @@ Route::middleware('auth:sanctum')->prefix('cart')->name('cart.')->controller(Car
     Route::post('add', 'addToCart')->name('add');
     Route::post('remove', 'removeFromCart')->name('remove');
     Route::delete('delete', 'deleteCart')->name('delete');
-    Route::get('/', 'getCart')->name('get'); 
+    Route::get('/', 'getCart')->name('get');
 });
 
 
