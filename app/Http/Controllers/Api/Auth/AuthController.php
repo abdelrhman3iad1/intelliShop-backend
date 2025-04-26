@@ -96,38 +96,60 @@ class AuthController extends Controller
     }
 
     public function changePassword(Request $request)
-{
-    $validator = Validator::make($request->all(), [
-        'old_password' => 'required|string|min:8',
-        'password' => ['required', 'string', 'min:8', 'confirmed', Password::defaults()],
-    ]);
-
-    if ($validator->fails()) {
+    {
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required|string|min:8',
+            'password' => ['nullable', 'string', 'min:8', 'confirmed', Password::defaults()],
+            'email' => 'nullable|email|unique:users,email,' . $request->user()->id,
+            'name' => 'nullable|string|max:255',
+        ]);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validation Error',
+                'data' => $validator->errors(),
+            ], 400);
+        }
+    
+        $user = $request->user();
+    
+        if (!Hash::check($request->old_password, $user->password)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Old password is incorrect.',
+                'data' => null,
+            ], 403);
+        }
+    
+        $updateData = [];
+    
+        if ($request->filled('password')) {
+            $updateData['password'] = Hash::make($request->password);
+        }
+    
+        if ($request->filled('email')) {
+            $updateData['email'] = $request->email;
+        }
+    
+        if ($request->filled('name')) {
+            $updateData['name'] = $request->name;
+        }
+    
+        if (empty($updateData)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No data provided to update.',
+            ], 400);
+        }
+    
+        $user->update($updateData);
+    
         return response()->json([
-            'status' => false,
-            'message' => 'Validation Error',
-            'data' => $validator->errors(),
-        ], 400);
+            'status' => true,
+            'message' => 'Profile updated successfully.',
+            'data' => new UserResource($user),
+        ], 200);
     }
-
-    $user = $request->user();
-
-    if (!Hash::check($request->old_password, $user->password)) {
-        return response()->json([
-            'status' => false,
-            'message' => 'Old password is incorrect.',
-            'data' => null
-        ], 403);
-    }
-
-    $user->update([
-        'password' => Hash::make($request->new_password),
-    ]);
-
-    return response()->json([
-        'status' => true,
-        'message' => 'Password changed successfully.',
-        'data' => new UserResource($user)
-    ], 200);
-}
+    
 }
