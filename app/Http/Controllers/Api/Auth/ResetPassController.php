@@ -79,7 +79,6 @@ class ResetPassController extends Controller
             return response()->json([
                 'status' => false,
                 'message' => 'Reset code has expired.',
-                'data' => null,
             ], 400);
         }
 
